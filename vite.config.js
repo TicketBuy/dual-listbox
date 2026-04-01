@@ -6,8 +6,8 @@ export default defineConfig({
     build: {
         lib: {
             entry: "src/dual-listbox.js",
-            formats: ["es", "cjs"],
-            fileName: "dual-listbox",
+            formats: ["es"],
+            fileName: () => "dual-listbox.js",
         },
         sourcemap: true,
         minify: true,
