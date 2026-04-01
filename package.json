@@ -2,6 +2,16 @@
     "name": "dual-listbox",
     "version": "2.0.0",
     "description": "Dual listbox for multi-select elements",
+    "main": "./dist/dual-listbox.cjs",
+    "module": "./dist/dual-listbox.mjs",
+    "exports": {
+        ".": {
+            "import": "./dist/dual-listbox.mjs",
+            "require": "./dist/dual-listbox.cjs"
+        },
+        "./dist/dual-listbox.css": "./dist/dual-listbox.css"
+    },
+    "files": ["dist"],
     "devDependencies": {
         "@vitest/coverage-v8": "^4.1.2",
         "jsdom": "^29.0.1",
@@ -36,7 +46,5 @@
     "bugs": {
         "url": "https://github.com/maykinmedia/dual-listbox/issues"
     },
-    "homepage": "https://github.com/maykinmedia/dual-listbox#readme",
-    "dependencies": {
-    }
+    "homepage": "https://github.com/maykinmedia/dual-listbox#readme"
 }
