@@ -93,14 +93,10 @@ class DualListbox {
     }
 
     changeOrder(liItem, newPosition) {
-        console.log(liItem);
         const index = this.options.findIndex((option) => {
-            console.log(option, liItem.dataset.id);
             return option.value === liItem.dataset.id;
         });
-        console.log(index);
         const cutOptions = this.options.splice(index, 1);
-        console.log(cutOptions);
         this.options.splice(newPosition, 0, cutOptions[0]);
     }
 
@@ -131,7 +127,7 @@ class DualListbox {
     /**
      * Add the listItem to the selected list.
      *
-     * @param {NodeElement} listItem
+     * @param {Element} listItem
      */
     changeSelected(listItem) {
         const changeOption = this.options.find(
@@ -145,9 +141,11 @@ class DualListbox {
             if (changeOption.selected) {
                 event.initEvent("added", false, true);
                 event.addedElement = listItem;
+                event.select = this.select;
             } else {
                 event.initEvent("removed", false, true);
                 event.removedElement = listItem;
+                event.select = this.select;
             }
 
             this.dualListbox.dispatchEvent(event);
@@ -160,6 +158,14 @@ class DualListbox {
         }
         this.options.forEach((option) => (option.selected = true));
         this.redraw();
+
+        setTimeout(() => {
+            let event = document.createEvent("HTMLEvents");
+            event.initEvent("addedAll", false, true);
+            event.select = this.select;
+
+            this.dualListbox.dispatchEvent(event);
+        }, 0);
     }
 
     actionAllDeselected(event) {
@@ -168,16 +174,28 @@ class DualListbox {
         }
         this.options.forEach((option) => (option.selected = false));
         this.redraw();
+
+        setTimeout(() => {
+            let event = document.createEvent("HTMLEvents");
+            event.initEvent("removedAll", false, true);
+            event.select = this.select;
+
+            this.dualListbox.dispatchEvent(event);
+        }, 0);
     }
 
     /**
      * Redraws the Dual listbox content
      */
     redraw() {
-        this.options.sort(this.sortFunction);
+        // Disable sorting on redraw when sortable is enabled, because it resets the order continuously, which is not desired when using sortable...
+        if(! this.showSortButtons && ! this.draggable) {
+            this.options.sort(this.sortFunction);
+        }
 
         this.updateAvailableListbox();
         this.updateSelectedListbox();
+
         this.syncSelect();
     }
 
@@ -287,7 +305,7 @@ class DualListbox {
     }
 
     /**
-     * Action when double clicked on a listItem.
+     * Action when double-clicked on a listItem.
      */
     _actionItemDoubleClick(listItem, event = null) {
         if (event) {
@@ -397,6 +415,7 @@ class DualListbox {
             )
         );
         this.dualListBoxContainer.appendChild(this.buttons);
+
         this.dualListBoxContainer.appendChild(
             this._createList(
                 this.search_right,
@@ -469,6 +488,12 @@ class DualListbox {
     _createListItem(option) {
         let listItem = document.createElement("li");
 
+        for (let key in option.dataset) {
+            if (option.dataset.hasOwnProperty(key)) {
+                listItem.dataset[key] = option.dataset[key];
+            }
+        }
+
         listItem.classList.add(ITEM_ELEMENT);
         listItem.innerHTML = option.text;
         listItem.dataset.id = option.value;
@@ -486,7 +511,6 @@ class DualListbox {
     _liListeners(li) {
         li.addEventListener("dragstart", (event) => {
             // store a ref. on the dragged elem
-            console.log("drag start", event);
             this.dragged = event.currentTarget;
             event.currentTarget.classList.add("dragging");
         });
@@ -646,7 +670,8 @@ class DualListbox {
             this.addOption({
                 text: option.innerHTML,
                 value: option.value,
-                selected: option.attributes.selected || false,
+                selected: option.attributes.selected || option.selected || false,
+                dataset: option.dataset,
                 order: index,
             });
         });
@@ -659,14 +684,14 @@ class DualListbox {
     _initializeSortButtons() {
         const sortUpButton = document.createElement("button");
         sortUpButton.classList.add("dual-listbox__button");
-        sortUpButton.innerText = this.upButtonText;
+        sortUpButton.innerHTML = this.upButtonText;
         sortUpButton.addEventListener("click", (event) =>
             this._onSortButtonClick(event, DIRECTION_UP)
         );
 
         const sortDownButton = document.createElement("button");
         sortDownButton.classList.add("dual-listbox__button");
-        sortDownButton.innerText = this.downButtonText;
+        sortDownButton.innerHTML = this.downButtonText;
         sortDownButton.addEventListener("click", (event) =>
             this._onSortButtonClick(event, DIRECTION_DOWN)
         );
@@ -681,12 +706,12 @@ class DualListbox {
 
     /**
      * @private
-     * @param {MouseEvent} event
+     * @param {MouseEvent} e
      * @param {string} direction
      * @return {void}
      */
-    _onSortButtonClick(event, direction) {
-        event.preventDefault();
+    _onSortButtonClick(e, direction) {
+        e.preventDefault();
 
         const selected = this.dualListbox.querySelector(
             ".dual-listbox__item--selected"
@@ -694,13 +719,23 @@ class DualListbox {
         const option = this.options.find(
             (option) => option.value === selected.dataset.id
         );
+
         if (selected) {
             const newIndex = this._getNewIndex(selected, direction);
+
             if (newIndex >= 0) {
                 this.changeOrder(selected, newIndex);
                 this.redraw();
             }
         }
+
+        setTimeout(() => {
+            let event = document.createEvent("HTMLEvents");
+            event.initEvent("reordered", false, true);
+            event.select = this.select;
+
+            this.dualListbox.dispatchEvent(event);
+        }, 0);
     }
 
     /**
@@ -708,11 +743,14 @@ class DualListbox {
      * selected item in the right box and the second element is the new index.
      *
      * @private
+     * @param selected
      * @param {string} direction
-     * @return {int[]}
+     * @return {int}
      */
     _getNewIndex(selected, direction) {
-        const oldIndex = this.options.findIndex(
+        const selectedOptions = this.options.filter((option) => option.selected);
+
+        const oldIndex = selectedOptions.findIndex(
             (option) => option.value === selected.dataset.id
         );
 
@@ -721,7 +759,7 @@ class DualListbox {
             newIndex -= 1;
         } else if (
             DIRECTION_DOWN === direction &&
-            oldIndex < selected.length - 1
+            oldIndex < selectedOptions.length - 1
         ) {
             newIndex += 1;
         }
@@ -737,13 +775,10 @@ class DualListbox {
         return typeof HTMLElement === "object"
             ? o instanceof HTMLElement //DOM2
             : o &&
-                  typeof o === "object" &&
-                  o !== null &&
-                  o.nodeType === 1 &&
-                  typeof o.nodeName === "string";
+            typeof o === "object" && o.nodeType === 1 &&
+            typeof o.nodeName === "string";
     }
 }
 
-window.DualListbox = DualListbox;
 export default DualListbox;
 export { DualListbox };
