@@ -1,14 +1,26 @@
-/// <reference types="vitest" />
+/// <reference types="vitest/config" />
 
 import { defineConfig } from "vite";
 
 export default defineConfig({
+    build: {
+        lib: {
+            entry: "src/dual-listbox.js",
+            formats: ["es", "cjs"],
+            fileName: "dual-listbox",
+        },
+        sourcemap: true,
+        minify: true,
+        rollupOptions: {
+            output: {
+                exports: "named",
+            },
+        },
+    },
     test: {
         globals: true,
         environment: "jsdom",
         coverage: {
-            reporter: ["text", "clover"],
-            all: true,
             exclude: [
                 "tests",
                 "dist",

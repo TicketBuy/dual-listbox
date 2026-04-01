@@ -1,3 +1,5 @@
+import './dual-listbox.scss';
+
 const MAIN_BLOCK = "dual-listbox";
 
 const CONTAINER_ELEMENT = "dual-listbox__container";
@@ -131,7 +133,7 @@ class DualListbox {
      */
     changeSelected(listItem) {
         const changeOption = this.options.find(
-            (option) => option.value === listItem.dataset.id
+            (option) => option.value === listItem.dataset.id,
         );
         changeOption.selected = !changeOption.selected;
         this.redraw();
@@ -189,7 +191,7 @@ class DualListbox {
      */
     redraw() {
         // Disable sorting on redraw when sortable is enabled, because it resets the order continuously, which is not desired when using sortable...
-        if(! this.showSortButtons && ! this.draggable) {
+        if (!this.showSortButtons && !this.draggable) {
             this.options.sort(this.sortFunction);
         }
 
@@ -229,7 +231,7 @@ class DualListbox {
     updateAvailableListbox() {
         this._updateListbox(
             this.availableList,
-            this.options.filter((option) => !option.selected)
+            this.options.filter((option) => !option.selected),
         );
     }
 
@@ -239,7 +241,7 @@ class DualListbox {
     updateSelectedListbox() {
         this._updateListbox(
             this.selectedList,
-            this.options.filter((option) => option.selected)
+            this.options.filter((option) => option.selected),
         );
     }
 
@@ -285,7 +287,7 @@ class DualListbox {
         event.preventDefault();
 
         let selected = this.availableList.querySelector(
-            `.${SELECTED_MODIFIER}`
+            `.${SELECTED_MODIFIER}`,
         );
         if (selected) {
             this.changeSelected(selected);
@@ -353,16 +355,16 @@ class DualListbox {
      */
     _addButtonActions() {
         this.add_all_button.addEventListener("click", (event) =>
-            this.actionAllSelected(event)
+            this.actionAllSelected(event),
         );
         this.add_button.addEventListener("click", (event) =>
-            this.actionItemSelected(event)
+            this.actionItemSelected(event),
         );
         this.remove_button.addEventListener("click", (event) =>
-            this.actionItemDeselected(event)
+            this.actionItemDeselected(event),
         );
         this.remove_all_button.addEventListener("click", (event) =>
-            this.actionAllDeselected(event)
+            this.actionAllDeselected(event),
         );
     }
 
@@ -373,10 +375,10 @@ class DualListbox {
      */
     _addClickActions(listItem) {
         listItem.addEventListener("dblclick", (event) =>
-            this._actionItemDoubleClick(listItem, event)
+            this._actionItemDoubleClick(listItem, event),
         );
         listItem.addEventListener("click", (event) =>
-            this._actionItemClick(listItem, this.dualListbox, event)
+            this._actionItemClick(listItem, this.dualListbox, event),
         );
         return listItem;
     }
@@ -387,16 +389,16 @@ class DualListbox {
      */
     _addSearchActions() {
         this.search_left.addEventListener("change", (event) =>
-            this.searchLists(event.target.value, this.availableList)
+            this.searchLists(event.target.value, this.availableList),
         );
         this.search_left.addEventListener("keyup", (event) =>
-            this.searchLists(event.target.value, this.availableList)
+            this.searchLists(event.target.value, this.availableList),
         );
         this.search_right.addEventListener("change", (event) =>
-            this.searchLists(event.target.value, this.selectedList)
+            this.searchLists(event.target.value, this.selectedList),
         );
         this.search_right.addEventListener("keyup", (event) =>
-            this.searchLists(event.target.value, this.selectedList)
+            this.searchLists(event.target.value, this.selectedList),
         );
     }
 
@@ -411,8 +413,8 @@ class DualListbox {
             this._createList(
                 this.search_left,
                 this.availableListTitle,
-                this.availableList
-            )
+                this.availableList,
+            ),
         );
         this.dualListBoxContainer.appendChild(this.buttons);
 
@@ -420,8 +422,8 @@ class DualListbox {
             this._createList(
                 this.search_right,
                 this.selectedListTitle,
-                this.selectedList
-            )
+                this.selectedList,
+            ),
         );
 
         this.dualListbox.appendChild(this.dualListBoxContainer);
@@ -525,7 +527,7 @@ class DualListbox {
                 // Allow the drop event to be emitted for the dropzone.
                 event.preventDefault();
             },
-            false
+            false,
         );
 
         li.addEventListener("dragenter", (event) => {
@@ -541,7 +543,7 @@ class DualListbox {
             event.stopPropagation();
             event.target.classList.remove("drop-above");
             let newIndex = this.options.findIndex(
-                (option) => option.value === event.target.dataset.id
+                (option) => option.value === event.target.dataset.id,
             );
             if (event.target.parentElement === this.dragged.parentElement) {
                 this.changeOrder(this.dragged, newIndex);
@@ -586,7 +588,7 @@ class DualListbox {
                     // Allow the drop event to be emitted for the dropzone.
                     event.preventDefault();
                 },
-                false
+                false,
             );
 
             dropzone.addEventListener("dragenter", (event) => {
@@ -670,7 +672,8 @@ class DualListbox {
             this.addOption({
                 text: option.innerHTML,
                 value: option.value,
-                selected: option.attributes.selected || option.selected || false,
+                selected:
+                    option.attributes.selected || option.selected || false,
                 dataset: option.dataset,
                 order: index,
             });
@@ -686,14 +689,14 @@ class DualListbox {
         sortUpButton.classList.add("dual-listbox__button");
         sortUpButton.innerHTML = this.upButtonText;
         sortUpButton.addEventListener("click", (event) =>
-            this._onSortButtonClick(event, DIRECTION_UP)
+            this._onSortButtonClick(event, DIRECTION_UP),
         );
 
         const sortDownButton = document.createElement("button");
         sortDownButton.classList.add("dual-listbox__button");
         sortDownButton.innerHTML = this.downButtonText;
         sortDownButton.addEventListener("click", (event) =>
-            this._onSortButtonClick(event, DIRECTION_DOWN)
+            this._onSortButtonClick(event, DIRECTION_DOWN),
         );
 
         const buttonContainer = document.createElement("div");
@@ -714,10 +717,10 @@ class DualListbox {
         e.preventDefault();
 
         const selected = this.dualListbox.querySelector(
-            ".dual-listbox__item--selected"
+            ".dual-listbox__item--selected",
         );
         const option = this.options.find(
-            (option) => option.value === selected.dataset.id
+            (option) => option.value === selected.dataset.id,
         );
 
         if (selected) {
@@ -748,10 +751,12 @@ class DualListbox {
      * @return {int}
      */
     _getNewIndex(selected, direction) {
-        const selectedOptions = this.options.filter((option) => option.selected);
+        const selectedOptions = this.options.filter(
+            (option) => option.selected,
+        );
 
         const oldIndex = selectedOptions.findIndex(
-            (option) => option.value === selected.dataset.id
+            (option) => option.value === selected.dataset.id,
         );
 
         let newIndex = oldIndex;
@@ -775,8 +780,9 @@ class DualListbox {
         return typeof HTMLElement === "object"
             ? o instanceof HTMLElement //DOM2
             : o &&
-            typeof o === "object" && o.nodeType === 1 &&
-            typeof o.nodeName === "string";
+                  typeof o === "object" &&
+                  o.nodeType === 1 &&
+                  typeof o.nodeName === "string";
     }
 }
 

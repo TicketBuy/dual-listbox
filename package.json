@@ -2,21 +2,20 @@
     "name": "dual-listbox",
     "version": "2.0.0",
     "description": "Dual listbox for multi-select elements",
-    "browserslist": "> 0.05%",
     "devDependencies": {
-        "c8": "^7.11.2",
-        "esbuild": "^0.14.38",
-        "esbuild-plugin-sass": "^1.0.1",
-        "jsdom": "^19.0.0",
+        "@vitest/coverage-v8": "^4.1.2",
+        "jsdom": "^29.0.1",
+        "prettier": "^3.8.1",
+        "sass": "^1.87.0",
         "serve": "^14.0.1",
-        "vite": "^2.9.13",
-        "vitest": "^0.9.4"
+        "vite": "^8.0.3",
+        "vitest": "^4.1.2"
     },
     "scripts": {
         "test": "vitest run --coverage",
-        "build": "node build.js",
+        "build": "vite build",
         "serve": "serve",
-        "watch": "nodemon -w ./src/ -e js,scss ./build.js",
+        "watch": "vite build --watch",
         "lint": "prettier src/ -c",
         "format": "prettier src/ -w",
         "prepare-release": "npm run format && npm test && npm run build"
@@ -38,19 +37,6 @@
         "url": "https://github.com/maykinmedia/dual-listbox/issues"
     },
     "homepage": "https://github.com/maykinmedia/dual-listbox#readme",
-    "jest": {
-        "collectCoverage": true,
-        "collectCoverageFrom": [
-            "src/**/*.{js,jsx}",
-            "!**/node_modules/**",
-            "!**/vendor/**"
-        ],
-        "transform": {
-            "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/babelJest.js"
-        }
-    },
     "dependencies": {
-        "nodemon": "^2.0.20",
-        "prettier": "^2.6.2"
     }
 }

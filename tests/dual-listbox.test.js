@@ -116,7 +116,7 @@ test("should be able to initialize a filled select", () => {
     document.body.innerHTML = FIXTURE_FILLED_SELECT;
     let dlb = new DualListbox(`.${SELECT_CLASS}`);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
 });
 
 test("should be able to initialize a filled select with preselected items", () => {
@@ -148,7 +148,7 @@ test("should be able to add a list item to selected", () => {
     let listItem = document.querySelector('[data-id="1"]');
     dlb.changeSelected(listItem);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(1);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(0); // jsdom select always the first option
 });
 
 test("should be able to remove a list item from selected", () => {
@@ -157,11 +157,11 @@ test("should be able to remove a list item from selected", () => {
     let listItem = document.querySelector('[data-id="1"]');
     dlb.changeSelected(listItem);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(1);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(0);  // jsdom select always the first option
 
     dlb.changeSelected(listItem);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1);
 });
 
 test("should be able to remove a list item from selected that is not selected", () => {
@@ -170,7 +170,7 @@ test("should be able to remove a list item from selected that is not selected", 
     let listItem = document.querySelector('[data-id="1"]');
     dlb.changeSelected(listItem);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(1);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(0); // jsdom select always the first option
 });
 
 test("should be able to search the items", () => {
@@ -179,7 +179,7 @@ test("should be able to search the items", () => {
     let dlb = new DualListbox(`.${SELECT_CLASS}`);
     dlb.searchLists(query, dlb.dualListbox);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
     [...dlb.availableList.querySelectorAll(".dual-listbox__item")].forEach(
         (element) => {
             expect(element.style.display !== "none").toBe(
@@ -196,7 +196,7 @@ test("should be able to perform case insensitive search", () => {
     let dlb = new DualListbox(`.${SELECT_CLASS}`);
     dlb.searchLists(query, dlb.dualListbox);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
     [...dlb.availableList.querySelectorAll(".dual-listbox__item")].forEach(
         (element) => {
             expect(element.style.display !== "none").toBe(
@@ -212,7 +212,7 @@ test("should be able to search the items with no text", () => {
     let dlb = new DualListbox(`.${SELECT_CLASS}`);
     dlb.searchLists("", dlb.dualListbox);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
 });
 
 test("should be able to hit the addEvent callback", () => {
@@ -279,7 +279,7 @@ test("should be able to doubleclick on one of the elements to select", () => {
 
     let dlb = new DualListbox(`.${SELECT_CLASS}`);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
 
     let listItem = document.querySelector('[data-id="2"]');
     let clickEvent = document.createEvent("MouseEvents");
@@ -287,7 +287,7 @@ test("should be able to doubleclick on one of the elements to select", () => {
     listItem.dispatchEvent(clickEvent);
 
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(1);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(2); // jsdom select always the first option
 });
 
 test("should be able to doubleclick on one of the elements to deselect", () => {
@@ -316,7 +316,7 @@ test("should be able fire search on change", () => {
     search.dispatchEvent(changeEvent);
 
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
 });
 
 test("should be able fire search with the keyboard", () => {
@@ -329,7 +329,7 @@ test("should be able fire search with the keyboard", () => {
     search.dispatchEvent(keyupEvent);
 
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
 });
 
 test("should be able to create object from DOM element", () => {
@@ -337,7 +337,7 @@ test("should be able to create object from DOM element", () => {
     let dlb = new DualListbox(document.body.getElementsByTagName("select")[0]);
 
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
 });
 
 test("should set the item to availeble.", () => {
@@ -379,7 +379,7 @@ test("should only set the searched results to selected.", () => {
 
     let dlb = new DualListbox(document.body.getElementsByTagName("select")[0]);
     expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(0);
+    expect(dlb.options.filter((option) => option.selected).length).toBe(1); // jsdom select always the first option
 
     let event = {};
     event.preventDefault = () => {};
@@ -405,40 +405,45 @@ test("should only set the searched results to available.", () => {
     expect(dlb.options.filter((option) => option.selected).length).toBe(0);
 });
 
-test("should be able to add the removed eventListener", (done) => {
-    let domParent = document.createElement("div");
-    domParent.innerHTML = FIXTURE_FILLED_SELECT_PRESELECTED_MULTIPLE;
+test("should be able to add the removed eventListener", () => {
+    return new Promise((resolve) => {
+        let domParent = document.createElement("div");
+        domParent.innerHTML = FIXTURE_FILLED_SELECT_PRESELECTED_MULTIPLE;
 
-    let dlb = new DualListbox(domParent.getElementsByTagName("select")[0]);
-    expect(dlb.options.length).toBe(10);
-    expect(dlb.options.filter((option) => option.selected).length).toBe(3);
+        let dlb = new DualListbox(domParent.getElementsByTagName("select")[0]);
+        expect(dlb.options.length).toBe(10);
+        expect(dlb.options.filter((option) => option.selected).length).toBe(3);
 
-    dlb.addEventListener("removed", (event) => {
-        expect(event.removedElement).toBeTruthy();
-        expect(event.removedElement.textContent).toBe("Two");
-        done();
+        dlb.addEventListener("removed", (event) => {
+            expect(event.removedElement).toBeTruthy();
+            expect(event.removedElement.textContent).toBe("Two");
+            resolve();
+        });
+
+        let listItem = document.querySelector('[data-id="2"]');
+        dlb.changeSelected(listItem);
     });
-
-    let listItem = document.querySelector('[data-id="2"]');
-    dlb.changeSelected(listItem);
 });
 
-// test("should be able to add the added eventListener", (done) => {
-//     let domParent = document.createElement("div");
-//     domParent.innerHTML = FIXTURE_FILLED_SELECT_PRESELECTED_MULTIPLE;
+test("should be able to add the added eventListener", () => {
+    return new Promise((resolve) => {
+        let domParent = document.createElement("div");
+        domParent.innerHTML = FIXTURE_FILLED_SELECT_PRESELECTED_MULTIPLE;
 
-//     let dlb = new DualListbox(domParent.getElementsByTagName("select")[0]);
-//     expect(dlb.options.length).toBe(10);
-//     expect(dlb.options.filter((option) => option.selected).length).toBe(3);
+        let dlb = new DualListbox(domParent.getElementsByTagName("select")[0]);
+        expect(dlb.options.length).toBe(10);
+        expect(dlb.options.filter((option) => option.selected).length).toBe(3);
 
-//     dlb.addEventListener("added", (event) => {
-//         expect(event.addedElement).toBeTruthy();
-//         expect(event.addedElement.outerHTML).toBe(
-//             '<li class="dual-listbox__item dual-listbox__item--selected" data-id="1">One</li>'
-//         );
-//         done();
-//     });
+        dlb.addEventListener("added", (event) => {
+            expect(event.addedElement).toBeTruthy();
+            console.log(event.addedElement.outerHTML);
+            expect(event.addedElement.outerHTML).toBe(
+                '<li class="dual-listbox__item" data-id="1" draggable="true">One</li>'
+            );
+            resolve();
+        });
 
-//     let listItem = document.querySelector('[data-id="1"]');
-//     dlb.changeSelected(listItem);
-// });
+        let listItem = document.querySelector('[data-id="1"]');
+        dlb.changeSelected(listItem);
+    });
+});
